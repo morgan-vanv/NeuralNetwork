@@ -17,7 +17,6 @@ def load_data():
     u.encoding = 'latin1'
     training_data, validation_data, test_data = u.load()
     f.close()
-    print(training_data)
     return (training_data, validation_data, test_data)
 
 # Reformatting the data into a more usable form
