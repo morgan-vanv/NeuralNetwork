@@ -23,22 +23,51 @@ class Network(object):
         self.num_layers = 2 + self.numberHL                                         # Stores number of total Layers
 
         # Assembling Network Structure
-        self.structure = [[0]*self.neuronsIL]                                       # Adding Input Layer
-        self.structure.extend([[0] * self.neuronsHL] * self.numberHL)               # Adding Hidden Layer/s
+        self.structure = []
+        self.structure.append([0]*self.neuronsIL)                                   # Adding Input Layer
+        if self.numberHL > 1:
+            for i in range(self.numberHL):
+                self.structure.append([0] * self.neuronsHL)               # Adding Hidden Layer/s
         self.structure.append([0] * self.neuronsOL)                                 # Adding Output Layer
 
         # Initializing Weights and Biases
         i = 1
         self.weights = []
         self.biases = []
-        for layer in self.structure:
-            while i < self.num_layers:
-                self.weights.append([[random.random()] * len(layer)] * len(self.structure[i]))
-                self.biases.append([random.random()] * len(self.structure[i]))
-                i = i + 1
+
+        self.weights.append([[random.random()] * self.neuronsIL] * self.neuronsHL)
+        self.biases.append([random.random()] * self.neuronsHL)
+        if self.numberHL > 1:
+            for i in range(self.numberHL - 1):
+                self.weights.append([[random.random()] * self.neuronsHL] * self.neuronsHL)
+                self.biases.append([random.random()] * self.neuronsHL)
+        self.weights.append([[random.random()] * self.neuronsHL] * self.neuronsOL)
+        self.biases.append([random.random()] * self.neuronsOL)
+
         print('Initialization Completed')
-        
-        
+
+    # Iterates manually through each piece of test data, printing the network output and the expected output  
+    def test_function(self, test_data):
+        for example in test_data:
+            self.render_output(example[0])
+
+    # Calculates the output activation for a single training example
+    def render_output(self, test_data):
+        # Assign input activations to input layer
+        iterator = 0
+        for neuron in self.structure[0]:
+            self.structure[0][iterator] = float(test_data[0:784][iterator])
+            iterator = iterator + 1
+
+        # Loop through, starting at first hidden layer, using weights and biases to calculate activation for each neuron in this layer
+        i = 1
+        for i in range(self.num_layers):    # Loops through layers (layer iterator)
+            if i > 0:                       # Ignores first layer as no calculation is required
+                for q in range(len(self.structure[i])): # Loops through neurons in the layer
+                    self.structure[i][q] = sigmoid(np.dot(self.weights[i-1][q], self.structure[i-1]) + self.biases[i-1][q])
+            
+        print(self.structure[len(self.structure)-1])    # Prints output layer
+
     # Displays information about the arrangement of the network
     def print_info(self):
         print('\nInfo about this network: \n')

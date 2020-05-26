@@ -23,3 +23,4 @@ numberHL = 2                            # Setting the number of Hidden Layers (A
 
 net = NeuralNetwork.Network([neuronsIL, neuronsHL, neuronsOL, numberHL])    # Initializing the network
 net.print_info()                                                            # Printing information about the network
+net.test_function(training_data)                                            # Going through examples one by one, printing the untrained result
